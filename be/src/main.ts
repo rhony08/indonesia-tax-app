@@ -20,7 +20,12 @@ async function bootstrap() {
   app.use(cookieParser());
 
   app.enableCors({
-    origin: config.get<string>('frontendUrl', 'http://localhost:5173'),
+    origin: [
+      config.get<string>('frontendUrl', 'http://localhost:5173'),
+      'https://tax.stupefy.id',
+      'http://localhost:5173',
+      'http://localhost:3003',
+    ],
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization', 'Accept-Language'],
@@ -59,7 +64,7 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, swaggerConfig);
   SwaggerModule.setup('api/docs', app, document);
 
-  const port = config.get<number>('port', 3000);
+  const port = config.get<number>('port', 3003);
   await app.listen(port);
   logger.log(`Application running on http://localhost:${port}`);
   logger.log(`Swagger docs available at http://localhost:${port}/api/docs`);

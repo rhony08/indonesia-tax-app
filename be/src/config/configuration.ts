@@ -1,5 +1,5 @@
 export default () => ({
-  port: parseInt(process.env.PORT ?? '3000', 10),
+  port: parseInt(process.env.PORT ?? '3003', 10),
   nodeEnv: process.env.NODE_ENV ?? 'development',
   database: {
     provider: process.env.DATABASE_PROVIDER ?? 'sqlite',
@@ -14,7 +14,7 @@ export default () => ({
     clientSecret: process.env.GOOGLE_CLIENT_SECRET ?? '',
     callbackUrl:
       process.env.GOOGLE_CALLBACK_URL ??
-      'http://localhost:3000/api/v1/auth/google/callback',
+      'http://localhost:3003/api/v1/auth/google/callback',
   },
   frontendUrl: process.env.FRONTEND_URL ?? 'http://localhost:5173',
   midtrans: {

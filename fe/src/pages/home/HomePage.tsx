@@ -1,8 +1,23 @@
 import { useTranslation } from 'react-i18next';
 import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
-import { Search, MessageSquare, CheckCircle, Users, Star, Award } from 'lucide-react';
+import { Search, MessageSquare, CheckCircle, Users, Star, Award, Briefcase, FileText, ShoppingCart, Calendar, type LucideIcon } from 'lucide-react';
 import { api } from '../../lib/api';
+
+const iconMap: Record<string, LucideIcon> = {
+  briefcase: Briefcase,
+  'file-text': FileText,
+  'check-circle': CheckCircle,
+  'shopping-cart': ShoppingCart,
+  calendar: Calendar,
+  search: Search,
+  star: Star,
+};
+
+function CategoryIcon({ name }: { name?: string }) {
+  const Icon = name ? (iconMap[name] ?? Search) : Search;
+  return <Icon className="w-6 h-6 text-primary" />;
+}
 
 interface Consultant {
   id: string;
@@ -285,15 +300,7 @@ export function HomePage() {
                   className="bg-background-gray border border-border rounded-xl p-5 text-center hover:shadow-md hover:border-primary/30 hover:-translate-y-1 transition-all duration-300"
                 >
                   <div className="w-12 h-12 bg-primary-light rounded-lg flex items-center justify-center mx-auto mb-3">
-                    {category.icon ? (
-                      <img
-                        src={category.icon}
-                        alt={category.name}
-                        className="w-6 h-6"
-                      />
-                    ) : (
-                      <Search className="w-6 h-6 text-primary" />
-                    )}
+                    <CategoryIcon name={category.icon} />
                   </div>
                   <h3 className="font-semibold text-text-primary mb-1">
                     {category.name}

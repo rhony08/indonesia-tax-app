@@ -116,7 +116,11 @@ export function ChatPage() {
     const token = localStorage.getItem('accessToken');
     if (!token) return;
 
-    const socket: Socket = io('http://localhost:3000/chat', {
+    const wsUrl = import.meta.env.PROD
+      ? 'https://tax-api.stupefy.id'
+      : 'http://localhost:3003';
+
+    const socket: Socket = io(`${wsUrl}/chat`, {
       auth: { token },
       transports: ['websocket', 'polling'],
       reconnection: true,
