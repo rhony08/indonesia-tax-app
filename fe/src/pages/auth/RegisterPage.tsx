@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useSearchParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -30,6 +30,7 @@ type RegisterFormData = z.infer<typeof registerSchema>;
 export function RegisterPage() {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const registerUser = useAuthStore((s) => s.register);
 
   const [serverError, setServerError] = useState<string | null>(null);
@@ -61,7 +62,8 @@ export function RegisterPage() {
         phone: data.phone || undefined,
         npwp: data.npwp || undefined,
       });
-      navigate('/dashboard', { replace: true });
+      const redirect = searchParams.get('redirect') || '/dashboard';
+      navigate(redirect, { replace: true });
     } catch (err) {
       const message =
         err instanceof Error ? err.message : t('common.error');

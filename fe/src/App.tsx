@@ -36,7 +36,7 @@ export default function App() {
         <Route path="/blog/:slug" element={<BlogPostPage />} />
         <Route path="/dashboard" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
         <Route path="/chat/:consultationId" element={<ProtectedRoute><ChatPage /></ProtectedRoute>} />
-        <Route path="/booking/:consultantId" element={<ProtectedRoute><BookingPage /></ProtectedRoute>} />
+        <Route path="/booking/:consultantId" element={<BookingPage />} />
         <Route path="/admin/*" element={<ProtectedRoute roles={['admin']}><AdminPage /></ProtectedRoute>} />
       </Route>
     </Routes>

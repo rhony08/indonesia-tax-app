@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useSearchParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -17,6 +17,7 @@ type LoginFormData = z.infer<typeof loginSchema>;
 export function LoginPage() {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const login = useAuthStore((s) => s.login);
 
   const [serverError, setServerError] = useState<string | null>(null);
@@ -39,7 +40,8 @@ export function LoginPage() {
     setIsSubmitting(true);
     try {
       await login(data.email, data.password);
-      navigate('/dashboard', { replace: true });
+      const redirect = searchParams.get('redirect') || '/dashboard';
+      navigate(redirect, { replace: true });
     } catch (err) {
       const message =
         err instanceof Error ? err.message : t('common.error');

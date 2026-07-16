@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useQuery, useMutation } from '@tanstack/react-query';
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useParams, useNavigate, Link, useSearchParams } from 'react-router-dom';
 import { api } from '../../lib/api';
+import { useAuthStore } from '../../store/auth';
 import {
   Loader2,
   AlertCircle,
@@ -53,7 +54,9 @@ type Step = 1 | 2 | 3 | 4;
 export function BookingPage() {
   const { t } = useTranslation();
   const { consultantId } = useParams<{ consultantId: string }>();
+  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+  const { isAuthenticated } = useAuthStore();
 
   const [step, setStep] = useState<Step>(1);
   const [serviceType, setServiceType] = useState<'chat' | 'task' | null>(null);
@@ -454,41 +457,62 @@ export function BookingPage() {
             {t('booking.step4')}: {t('booking.confirmPay')}
           </h2>
 
-          <div className="border border-border rounded-lg p-6 text-center">
-            <p className="text-sm text-text-secondary mb-4">
-              {t('booking.total')}:{' '}
-              <span className="text-xl font-bold text-primary">
-                Rp {total.toLocaleString('id-ID')}
-              </span>
-            </p>
-
-            <p className="text-xs text-text-disabled mb-6">
-              {t('booking.step4')} —{' '}
-              {t('booking.consultantName')}: {consultant.name}
-            </p>
-
-            <button
-              onClick={() => bookMutation.mutate()}
-              disabled={bookMutation.isPending || payMutation.isPending}
-              className="w-full sm:w-auto px-8 py-3 text-sm font-medium text-white bg-primary hover:bg-primary-hover rounded-md disabled:opacity-50 disabled:cursor-not-allowed transition-colors inline-flex items-center justify-center gap-2"
-            >
-              {bookMutation.isPending || payMutation.isPending ? (
-                <Loader2 className="w-4 h-4 animate-spin" />
-              ) : null}
-              {t('booking.confirmPay')}
-            </button>
-          </div>
-
-          <div className="mt-6 flex justify-between">
-            <button
-              onClick={() => goToStep(3)}
-              className="flex items-center gap-2 px-5 py-2.5 text-sm font-medium text-text-secondary border border-border hover:bg-background-gray rounded-md transition-colors"
-            >
-              <ArrowLeft className="w-4 h-4" />
-              {t('booking.back')}
-            </button>
-            <div />
-          </div>
+          {!isAuthenticated ? (
+            <div className="border border-border rounded-lg p-6 text-center">
+              <p className="text-sm text-text-secondary mb-4">
+                {t('auth.register')} {t('common.or')} {t('auth.login')} {t('dashboard.toContinue') || 'to continue'}
+              </p>
+              <div className="flex justify-center gap-3">
+                <Link
+                  to={`/auth/login?redirect=/booking/${consultantId}${searchParams.toString() ? '?' + searchParams.toString() : ''}`}
+                  className="px-6 py-2.5 text-sm font-medium text-white bg-primary hover:bg-primary-hover rounded-md"
+                >
+                  {t('auth.login')}
+                </Link>
+                <Link
+                  to={`/auth/register?redirect=/booking/${consultantId}`}
+                  className="px-6 py-2.5 text-sm font-medium text-primary border border-primary hover:bg-primary-light rounded-md"
+                >
+                  {t('auth.register')}
+                </Link>
+              </div>
+            </div>
+          ) : (
+            <>
+              <div className="border border-border rounded-lg p-6 text-center">
+                <p className="text-sm text-text-secondary mb-4">
+                  {t('booking.total')}:{' '}
+                  <span className="text-xl font-bold text-primary">
+                    Rp {total.toLocaleString('id-ID')}
+                  </span>
+                </p>
+                <p className="text-xs text-text-disabled mb-6">
+                  {t('booking.step4')} —{' '}
+                  {t('booking.consultantName')}: {consultant.name}
+                </p>
+                <button
+                  onClick={() => bookMutation.mutate()}
+                  disabled={bookMutation.isPending || payMutation.isPending}
+                  className="w-full sm:w-auto px-8 py-3 text-sm font-medium text-white bg-primary hover:bg-primary-hover rounded-md disabled:opacity-50 disabled:cursor-not-allowed transition-colors inline-flex items-center justify-center gap-2"
+                >
+                  {bookMutation.isPending || payMutation.isPending ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : null}
+                  {t('booking.confirmPay')}
+                </button>
+              </div>
+              <div className="mt-6 flex justify-between">
+                <button
+                  onClick={() => goToStep(3)}
+                  className="flex items-center gap-2 px-5 py-2.5 text-sm font-medium text-text-secondary border border-border hover:bg-background-gray rounded-md transition-colors"
+                >
+                  <ArrowLeft className="w-4 h-4" />
+                  {t('booking.back')}
+                </button>
+                <div />
+              </div>
+            </>
+          )}
         </div>
       )}
     </div>
