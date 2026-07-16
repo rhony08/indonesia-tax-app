@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException, Logger } from '@nestjs/common';
-import { eq, and, or, like, desc, count } from 'drizzle-orm';
+import { eq, and, or, like, desc, count, sql } from 'drizzle-orm';
 import { db, schema } from '../../database/database';
 import { QueryBlogDto } from './dto/query-blog.dto';
 
@@ -120,6 +120,20 @@ export class BlogService {
       tags: this.parseTags(post.tags),
       view_count: post.view_count + 1,
     };
+  }
+
+  async getTags(): Promise<string[]> {
+    const rows = await db
+      .select({ tags: blogPosts.tags })
+      .from(blogPosts)
+      .where(eq(blogPosts.status, 'published'));
+    const tagSet = new Set<string>();
+    for (const row of rows) {
+      for (const tag of this.parseTags(row.tags)) {
+        if (tag) tagSet.add(tag);
+      }
+    }
+    return Array.from(tagSet).sort();
   }
 
   /**

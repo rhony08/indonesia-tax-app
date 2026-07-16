@@ -77,4 +77,12 @@ export class BlogController {
     const data = await this.blogService.findBySlug(slug);
     return { success: true, data };
   }
+
+  @Public()
+  @Get('tags')
+  @ApiOperation({ summary: 'Get all unique blog tags' })
+  async getTags() {
+    const data = await this.blogService.getTags();
+    return { success: true, data };
+  }
 }
